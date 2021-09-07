@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      home: MyHomePage(title: 'Demo DataBase'),
     );
   }
 }
@@ -35,14 +35,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     GetAllWordsUseCase _getAllWordsUc =
@@ -63,7 +55,19 @@ class _MyHomePageState extends State<MyHomePage> {
                 builder: (BuildContext context,
                     AsyncSnapshot<List<String>> snapshot) {
                   List<String>? words = snapshot.data;
-                  if (words != null) {
+                  if (words == null) {
+                    return Center(
+                      child: Text("Что-то видимо пошло не так :("),
+                    );
+                  } else if (words.isEmpty) {
+                    return Padding(
+                      padding: EdgeInsets.all(36),
+                      child: Center(
+                        child: Text(
+                            "Тут пока ничего нет. Добавь новое слово, чтобы оно появилось на экране"),
+                      ),
+                    );
+                  } else {
                     return ListView.builder(
                       scrollDirection: Axis.vertical,
                       itemCount: words.length,
@@ -75,25 +79,26 @@ class _MyHomePageState extends State<MyHomePage> {
                         );
                       },
                     );
-                  } else {
-                    return Text("Что-то видимо пошло не так :(");
                   }
                 }),
             Align(
               alignment: Alignment.bottomCenter,
-              child: Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      controller: myController,
+              child: Padding(
+                padding: EdgeInsets.all(18),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: myController,
+                      ),
                     ),
-                  ),
-                  ElevatedButton(
-                      onPressed: () {
-                        _insertWordUc.call(myController.text);
-                      },
-                      child: Text("Add"))
-                ],
+                    ElevatedButton(
+                        onPressed: () {
+                          _insertWordUc.call(myController.text);
+                        },
+                        child: Text("Add"))
+                  ],
+                ),
               ),
             ),
           ],
