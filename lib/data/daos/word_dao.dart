@@ -7,8 +7,21 @@ part 'word_dao.g.dart';
 class WordDao extends DatabaseAccessor<CarrotTestDb> with _$WordDaoMixin {
   WordDao(CarrotTestDb db) : super(db);
 
-  Stream<List<Word>> getAllWords() => (select(words)).watch();
+  Stream<List<Word>> getAllWords() {
+    try {
+      return (select(words)).watch();
+    } catch (e) {
+      print("XTEST: При получении списка слов произошла ошибка: $e");
+      return Stream.empty();
+    }
+  }
 
-  Future insertWord(Word word) =>
-      into(words).insert(word, mode: InsertMode.insertOrReplace);
+  Future insertWord(Word word) {
+    try {
+      return into(words).insert(word, mode: InsertMode.insertOrReplace);
+    } catch (e) {
+      print("XTEST: При вставке слова произошла ошибка: $e");
+      return Future.value();
+    }
+  }
 }
